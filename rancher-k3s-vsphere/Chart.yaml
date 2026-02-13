@@ -11,3 +11,6 @@ keywords:
   - kubernetes
 maintainers: []
 kubeVersion: ">=1.24.0"
+annotations:
+  - catalog.cattle.io/type: cluster-template
+
