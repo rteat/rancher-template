@@ -1,0 +1,22 @@
+{{- $clusterName := required "clusterName is required. Install with: helm install <RELEASE> . --set clusterName=<YOUR_CLUSTER_NAME>" .Values.clusterName }}
+apiVersion: rke-machine-config.cattle.io/v1
+kind: VsphereMachineConfig
+metadata:
+  name: {{ $clusterName }}-worker-config
+  namespace: {{ .Values.fleetNamespace | default "fleet-default" }}
+spec:
+  cloneFrom: {{ required "vsphere.template is required (VM template path in vSphere)" .Values.vsphere.template | quote }}
+  cloudConfig: {{ .Values.vsphere.cloudConfig | quote }}
+  cpuCount: {{ .Values.vsphere.cpuCount | quote }}
+  creationType: {{ .Values.vsphere.creationType | quote }}
+  datacenter: {{ .Values.vsphere.datacenter | quote }}
+  datastore: {{ .Values.vsphere.datastore | quote }}
+  diskSize: {{ .Values.vsphere.diskSize | quote }}
+  folder: {{ .Values.vsphere.folder | quote }}
+  gracefulShutdownTimeout: {{ .Values.vsphere.gracefulShutdownTimeout | quote }}
+  hostsystem: {{ .Values.vsphere.host | quote }}
+  memorySize: {{ .Values.vsphere.memorySize | quote }}
+  networks:
+    {{- toYaml .Values.vsphere.networks | nindent 4 }}
+  os: {{ .Values.vsphere.os | quote }}
+  pool: {{ .Values.vsphere.resourcePool | quote }}
