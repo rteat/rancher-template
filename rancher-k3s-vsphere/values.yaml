@@ -7,7 +7,7 @@ clusterName: ""   # e.g. my-k3s-cluster
 
 # Cloud credential secret in Rancher (format namespace:name)
 # Create in Rancher UI: Cluster Management > Cloud Credentials
-cloudCredentialSecretName: "cattle-global-data:cc-xxxxx"
+cloudCredentialSecretName: "cattle-global-data:cc-g4lk6"
 
 # Kubernetes version for K3s
 kubernetesVersion: "v1.34.2+k3s1"
@@ -67,3 +67,4 @@ vsphere:
 
 # Namespace where Cluster and machine configs are created (Rancher uses fleet-default)
 fleetNamespace: "fleet-default"
+
