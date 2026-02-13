@@ -1,0 +1,69 @@
+# Rancher K3s vSphere Cluster Template
+# Use with: helm install <RELEASE> . --set clusterName=<YOUR_CLUSTER_NAME> [--set ...]
+# You MUST provide clusterName (e.g. --set clusterName=my-k3s-cluster).
+
+# --- Required: set via --set clusterName=<name> or override below ---
+clusterName: ""   # e.g. my-k3s-cluster
+
+# Cloud credential secret in Rancher (format namespace:name)
+# Create in Rancher UI: Cluster Management > Cloud Credentials
+cloudCredentialSecretName: "cattle-global-data:cc-xxxxx"
+
+# Kubernetes version for K3s
+kubernetesVersion: "v1.34.2+k3s1"
+
+# Cluster labels (applied to the Cluster metadata)
+labels:
+  provider: cks
+
+# Machine config CRD kind and API version (must match CRDs in your Rancher cluster).
+# Rancher uses <Provider>Config (e.g. Amazonec2Config). For vSphere the kind is often
+# VmwarevsphereConfig. If you get "no matches for kind ... ensure CRDs are installed",
+# run: kubectl get crd | grep rke-machine
+# and set machineConfigKind to the listed kind (e.g. VmwarevsphereConfig, VsphereMachineConfig).
+machineConfigKind: "VmwarevsphereConfig"
+machineConfigApiVersion: "rke-machine-config.cattle.io/v1"
+
+# --- Machine pool: control (etcd + Control Plane) ---
+controlPool:
+  name: control
+  machineCount: 3
+  etcdRole: true
+  controlPlaneRole: true
+  workerRole: false
+
+# --- Machine pool: worker ---
+workerPool:
+  name: worker
+  machineCount: 3
+  etcdRole: false
+  controlPlaneRole: false
+  workerRole: true
+
+# --- vSphere settings (shared by both pools; override per-pool in pools if needed) ---
+vsphere:
+  # VM template path in vSphere (required for "Deploy from template: Data Center")
+  template: "/CDS-Datacenter(GDL2)/vm/cks-olab-01/GOLD-cvs-cks-rencherdev-202660121"
+  datacenter: "/CDS-Datacenter(GDL2)"
+  resourcePool: "/CDS-Datacenter(GDL2)/host/cks-dev-olab-01/Resources/rancherDev"
+  datastore: "/CDS-Datacenter(GDL2)/datastore/Common/cvs_hybrid_ds01"
+  folder: "/CDS-Datacenter(GDL2)/vm/CVS-olab-01/teatr"
+  host: "/CDS-Datacenter(GDL2)/host/cks-dev-olab-01/10.193.232.172"
+  gracefulShutdownTimeout: "0"
+  cpuCount: "8"
+  memorySize: "16384"
+  diskSize: "20000"
+  os: "linux"
+  # Creation method: "template" = Deploy from template (Data Center)
+  creationType: "template"
+  # Cloud config YAML (cloud-init)
+  cloudConfig: |
+    #cloud-config
+    runcmd:
+      - systemctl enable salt-minion
+      - systemctl start salt-minion
+  networks:
+    - "/CDS-Datacenter(GDL2)/network/CVS-DSwitch-01-VLAN629(DistibutedVirtualPortgroup:dvportgroup-28630)"
+
+# Namespace where Cluster and machine configs are created (Rancher uses fleet-default)
+fleetNamespace: "fleet-default"

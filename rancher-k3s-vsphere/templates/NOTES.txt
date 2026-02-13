@@ -1,0 +1,20 @@
+Rancher K3s vSphere cluster template has been rendered.
+
+CLUSTER NAME: {{ .Values.clusterName | default "<NOT SET - use --set clusterName=<name>>" }}
+
+You must install with a cluster name, for example:
+  helm install my-release . --set clusterName=my-k3s-cluster
+
+Optional: set vSphere VM template and cloud credential:
+  helm install my-release . \
+    --set clusterName=my-k3s-cluster \
+    --set cloudCredentialSecretName=cattle-global-data:cc-xxxxx \
+    --set vsphere.template="/Datacenter/vm/my-template"
+
+To apply the manifests to the Rancher management cluster:
+  helm template my-release . --set clusterName=my-k3s-cluster | kubectl apply -f -
+
+Or install the chart into the fleet-default namespace (if your kubectl context is the Rancher management cluster):
+  helm install my-release . --set clusterName=my-k3s-cluster -n fleet-default --create-namespace
+
+Then check cluster status in Rancher UI: Cluster Management > your cluster name.
