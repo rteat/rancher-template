@@ -1,13 +1,7 @@
-apiVersion: v2
-name: rancher-k3s-vsphere
-description: Helm template for Rancher v2.13.2 managed K3s clusters on VMware vSphere
-type: application
-version: 0.1.0
-appVersion: "2.13.2"
-keywords:
-  - rancher
-  - k3s
-  - vsphere
-  - kubernetes
-maintainers: []
-kubeVersion: ">=1.24.0"
+apiVersion: v1
+name: cluster-template
+description: Cluster template for rke2
+version: 0.0.1
+annotations:
+  catalog.cattle.io/type: cluster-template
+  catalog.cattle.io/namespace: fleet-default
